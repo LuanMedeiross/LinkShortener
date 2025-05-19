@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 from pydantic import BaseModel
 from src.database.db import get_db
@@ -12,7 +12,7 @@ class URLParamsModel(BaseModel):
     url: str = None
     url_id: str = None
 
-@app.post(f"/shorten/")
+@app.post(f"/shorten")
 def shorten(model: URLParamsModel, request: Request):
 
     domain = request.headers.get("host", "")
@@ -34,4 +34,15 @@ def shorten(model: URLParamsModel, request: Request):
         status_code = 201
     )
 
+@app.get("/{url_id}")
+def redirect(url_id: str):
+
+    link = links.find_one({"url_id": url_id})
+
+    if not link:
+        return JSONResponse(content={"message": "Not Found"}, status_code=404)
+
+    url = link["url"]
+
+    return RedirectResponse(url, 308)
 
