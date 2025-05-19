@@ -1,12 +1,12 @@
 import os
 
-from pymongo.mongo_client import MongoClient
+from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from dotenv import load_dotenv
 
 load_dotenv()
 
-def db_client():
+def get_db():
  
     CONNECTION_STRING = os.environ.get("CONNECTION_STRING")
  
@@ -18,10 +18,7 @@ def db_client():
     except Exception as e:
         print(e)
 
-    return client
+    db = client["linkshortener"]
+
+    return db
         
-if __name__ == "__main__":   
-  
-   client = db_client()
-   db = client["linkshortener"]
-   links = db["links"]
