@@ -66,7 +66,7 @@ urls = [
 # Envio dos POSTs com header "url"
 for i, url in enumerate(urls, start=1):
     try:
-        response = requests.post("http://localhost:8000/shorten", headers={"host": "localhost:8000"}, json={"url": url})
+        response = requests.post("https://link-shortener-14d3juljn-luanmedeiross-projects.vercel.app/shorten", headers={"host": "localhost:8000"}, json={"url": url})
         print(f"[{i:03}] {url} => Status: {response.status_code}")
     except Exception as e:
         print(f"[{i:03}] {url} => ERRO: {e}")

@@ -42,7 +42,7 @@ def shorten(model: URLParamsModel, request: Request):
     })
 
     return JSONResponse(
-        content = {"link": f"{domain}/{url_id}"},
+        content = {"link": f"https://{domain}/{url_id}"},
         status_code = 201
     )
 
