@@ -1,3 +1,6 @@
+import random
+import string
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 
@@ -10,27 +13,36 @@ links = db["links"]
 
 class URLParamsModel(BaseModel):
     url: str = None
-    url_id: str = None
+
+def generate_url_id():
+    chars = string.ascii_letters + string.digits
+    hash = ''.join(random.choices(chars, k=8))
+    
+    return hash
 
 @app.post(f"/shorten")
 def shorten(model: URLParamsModel, request: Request):
 
     domain = request.headers.get("host", "")
     
-    if not model.url or not model.url_id:
+    if not model.url:
         return JSONResponse(
             content = {'message': 'Missing params'}, 
             status_code = 404
         )
     
+    url_id = generate_url_id()
+    while links.find_one({"url_id": url_id}):
+        url_id = generate_url_id()
+    
     links.insert_one({
         "url": model.url,
-        "url_id": model.url_id,
+        "url_id": url_id,
         "redirects": 0
     })
 
     return JSONResponse(
-        content = {"link": f"{domain}/{model.url_id}"},
+        content = {"link": f"{domain}/{url_id}"},
         status_code = 201
     )
 
